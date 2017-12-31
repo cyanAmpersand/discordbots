@@ -1,5 +1,30 @@
 import re
 
+def timeString(hours,minutes,offset):
+    hours = str((int(hours) + offset) % 24)
+    minutes = str(minutes)
+    while len(hours) < 2:
+        hours = "0" + hours
+    while len(minutes) < 2:
+        minutes = "0" + minutes
+    return hours + ":" + minutes
+
+class Controller:
+    def __init__(self):
+        self.servers = []
+
+    def getServerById(self,serverId):
+        for s in self.servers:
+            if s.serverId == serverId:
+                return s
+        return None
+
+    def addServer(self,serverId):
+        if self.getServerById(serverId) == None:
+            self.servers.append(UserList(serverId))
+        else:
+            print("server already exists")
+
 class User:
     def __init__(self,userId,name,timezone = 0):
         self.userId = userId
@@ -17,10 +42,11 @@ class User:
         self.registered = True
 
 class UserList:
-    def __init__(self):
+    def __init__(self,serverId):
         self.users = []
         self.timezones = set()
         self.timezones.add(0)
+        self.serverId = serverId
 
     def addUser(self,userId,name,timezone = None,r = False):
         if userId not in [u.userId for u in self.users]:
@@ -43,6 +69,7 @@ class UserList:
                     if r:
                         u.register()
         self.save()
+        self.refreshTimezones()
 
     def getUserById(self,userId):
         for u in self.users:
@@ -57,7 +84,8 @@ class UserList:
         print("user not found")
         return None
 
-    def save(self,fname="userlist.txt"):
+    def save(self):
+        fname = "userlist" + self.serverId + ".txt"
         userlistStr = ""
         for user in self.users:
             userlistStr += user.userId + "," + user.name + "," + str(user.timezone) + "," + str(user.registered) + "\n"
@@ -65,7 +93,9 @@ class UserList:
         f.write(userlistStr)
         f.close()
 
-    def load(self,fname="userlist.txt"):
+    def load(self):
+        fname = "userlist" + self.serverId + ".txt"
+        print("loading from " + fname)
         try:
             f = open(fname,"r")
         except FileNotFoundError:
@@ -84,7 +114,14 @@ class UserList:
                             newr = True
                         else:
                             newr = False
-                        self.addUser(u[0],u[1],timezone = u[2],r = newr)
+                        self.addUser(u[0],u[1],timezone = int(u[2]),r = newr)
+        print("done")
+        
+
+    def refreshTimezones(self):
+        self.timezones = set()
+        for u in self.users:
+            self.timezones.add(u.timezone)
 
 def parseTime(timestamp):
     hours = 0
