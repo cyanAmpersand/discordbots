@@ -72,7 +72,7 @@ async def on_message(message):
                         reply += str(mentionedUser.timezone)
                     reply += "\n"
                 else:
-                    reply += u.name + " not registered. " + u.mention + ", use !settimezone to set your timezone."
+                    reply += u.name + " not registered. " + u.mention + ", use !!settimezone to set your timezone."
             reply += "```"
             if len(message.mentions) > 0:
                 await client.send_message(message.channel,reply)
@@ -94,7 +94,7 @@ async def on_message(message):
                 if message.author.id == u.userId:
                     authorZone = int(u.timezone)
                     if not u.registered:
-                        reply += "you have not registered. the following assumes you are in UTC. use !settimezone to register\n"
+                        reply += "you have not registered. the following assumes you are in UTC. use !!settimezone to register\n"
             reply += "```"
             messageStr = message.content.lower()
             timeMatches = re.findall("(\n|\W|^)(([01]\d|2[0-3]):([0-5]\d)|(([1-9]|1[0-2])(((:[0-5]\d)?\W?(pm|am))|(:[0-5]\d))))(\W|$|\n)",messageStr)
