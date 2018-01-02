@@ -29,11 +29,6 @@ for filename in os.listdir("."):
 ##    "125424672765509632":-8,#tenttle
 ##}
 
-##TODO:
-##  -command to check what timezone a user is
-##  -register a user's server(s) and only display their timezone in relevant servers
-##  -fix timezone removal when no users are in the timezone
-
 awaiting_response = set()
 
 @client.event
